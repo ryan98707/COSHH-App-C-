@@ -1,0 +1,667 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+using System.IO;
+
+namespace Chemical_Classifications
+{
+    public partial class Form1 : Form
+    {
+
+        List<string> groupA;
+        List<string> groupB;
+        List<string> groupC;
+        List<string> groupD;
+        List<string> groupE;
+        List<double> num;
+
+        double people_exposed;
+        double answer;
+        public int severityFac;
+        double Frequency_Factor;
+        double probabilityofinjury;
+        private string person;
+
+        public Form1()
+        {
+            InitializeComponent();
+            groupA = new List<string>();
+            groupB = new List<string>();
+            groupC = new List<string>();
+            groupD = new List<string>();
+            groupE = new List<string>();
+            num = new List<double>();
+        }
+
+        private void readfile()
+        {
+            string[] Hazards_Materials = System.IO.File.ReadAllLines(@"H:\Work2_Completed\Chemical_Classifications\bin\Debug\netcoreapp3.1\Hazard_statements_spreadsheet.csv");   //This is where the File is stored#
+
+
+
+            for (int i = 0; i < Hazards_Materials.Length; i++)                        //This loop Runs through the entire length of the File
+            {
+                string[] rowData = Hazards_Materials[i].Split(',');                   //This will split the lines in the excel spreadsheet
+                {
+
+                    lstHazardNumbers.Items.Add(rowData[0]);
+
+                    //This Adds The list All The ComboBoxes
+                    groupA.Add(rowData[0]);
+                }
+            }
+        }
+
+        private void AddgroupB()
+        {
+            groupB.Add("H302");
+            groupB.Add("H312");
+            groupB.Add("H332");
+            groupB.Add("H371");
+
+        }
+
+        private void AddgroupC()
+        {
+            groupC.Add("H301");
+            groupC.Add("H311");
+            groupC.Add("H314");
+            groupC.Add("H317");
+            groupC.Add("H318");
+            groupC.Add("H331");
+            groupC.Add("H335");
+            groupC.Add("H370");
+
+        }
+
+        private void AddgroupD()
+        {
+            groupD.Add("H300");
+            groupD.Add("H310");
+            groupD.Add("H330");
+            groupD.Add("H351");
+            groupD.Add("H360");
+            groupD.Add("H361");
+            groupD.Add("H362");
+            groupD.Add("H372");
+        }
+
+        private void AddgroupE()
+        {
+            groupE.Add("H334");
+            groupE.Add("H340");
+            groupE.Add("H341");
+            groupE.Add("H350");
+        }
+
+        private void Statements()
+        {
+
+            //Group A
+
+            foreach (var name in lstHazardNum.Items)
+            {
+                if (groupA.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) <= 20 && int.Parse(txtBoiling.Text) <= 50)   //High Vol
+                {
+                    num.Add(1);
+                }
+
+                else if (groupA.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) >= 100 && int.Parse(txtBoiling.Text) <= 200)  //High Vol
+                {
+                    num.Add(2);
+                }
+                else if (groupA.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) >= 150 && int.Parse(txtBoiling.Text) <= 300) // High
+                {
+                    num.Add(2);
+                }
+                else if (groupA.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) >= 51 && int.Parse(txtBoiling.Text) <= 150) //Med
+                {
+                    num.Add(1);
+                }
+
+                else if (groupA.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) >= 101 && int.Parse(txtBoiling.Text) <= 200) //Med
+                {
+                    num.Add(1);
+                }
+
+                else if (groupA.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) >= 301 && int.Parse(txtBoiling.Text) <= 700) //Med
+                {
+                    num.Add(1);
+                }
+
+                else if (groupA.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) >= 0 && int.Parse(txtBoiling.Text) <= 150) //Low
+                {
+                    num.Add(1);
+                }
+                else if (groupA.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) >= 51 && int.Parse(txtBoiling.Text) <= 150) //Low
+                {
+                    num.Add(1);
+                }
+                else if (groupA.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) >= 76 && int.Parse(txtBoiling.Text) <= 1000) // Low
+                {
+                    num.Add(2);
+                }
+
+                //Group B
+
+                else if (groupB.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) >= 0 && int.Parse(txtBoiling.Text) <= 50)   //High Vol
+                {
+                    num.Add(1);
+                }
+
+                else if (groupB.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) >= 100 && int.Parse(txtBoiling.Text) <= 200)  //High Vol
+                {
+                    num.Add(2);
+                }
+                else if (groupB.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) <=150 && int.Parse(txtBoiling.Text) <= 300)  //High Vol
+                {
+                    num.Add(3);
+                }
+               
+
+                else if (groupB.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) >= 51 && int.Parse(txtBoiling.Text) <= 150) //Med
+                {
+                    num.Add(1);
+                }
+
+                else if (groupB.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) >= 101 && int.Parse(txtBoiling.Text) <= 500) //Med
+                {
+                    num.Add(2);
+                }
+
+                else if (groupB.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) >= 301 && int.Parse(txtBoiling.Text) <= 700) //MEd
+                {
+                    num.Add(2);
+                }
+
+                else if (groupB.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) >= 0 && int.Parse(txtBoiling.Text) <= 150) //Low
+                {
+                    num.Add(1);
+                }
+                else if (groupB.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) >= 51 && int.Parse(txtBoiling.Text) <= 310)//Low
+                {
+                    num.Add(1);
+                }
+                else if (groupB.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) >= 76 && int.Parse(txtBoiling.Text) <= 1000)//Low
+                {
+                    num.Add(1);
+                }
+
+
+         
+                //Group C ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                else if (groupC.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) <=0 && int.Parse(txtBoiling.Text) <= 50)   //High Vol
+                {
+                    num.Add(2);
+                }
+
+                else if (groupC.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) <= 100 && int.Parse(txtBoiling.Text) <= 200)  //High Vol
+                {
+                    num.Add(3);
+                }
+
+                else if(groupC.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) <= 150 && int.Parse(txtBoiling.Text) <= 300) // High
+                {
+                    num.Add(4);
+                }
+                else if (groupC.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) <= 51 && int.Parse(txtBoiling.Text) <= 150) //Med
+                {
+                    num.Add(2);
+                }
+
+                else if (groupC.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) <= 101 && int.Parse(txtBoiling.Text) <= 500) //Med
+                {
+                    num.Add(3);
+                }
+
+                else if (groupC.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) <= 301 && int.Parse(txtBoiling.Text) <= 700) //MEd
+                {
+                    num.Add(4);
+                }
+
+                else if (groupC.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) <= 0 && int.Parse(txtBoiling.Text) <= 350) //Low
+                {
+                    num.Add(1);
+                }
+                else if (groupC.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) <= 0 && int.Parse(txtBoiling.Text) <= 350) //Low if the number is less than zero and boiling point is less than equal to 350
+                {
+                    num.Add(1);
+                }
+
+                else if (groupC.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) <= 51 && int.Parse(txtBoiling.Text) <=350)//Low
+                {
+                    num.Add(2);
+                }
+                else if (groupC.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) <= 76 && int.Parse(txtBoiling.Text) <= 1000)//Low
+                {
+                    num.Add(2);
+                }
+
+                //Group D
+
+                else if (groupD.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) >= 0 && int.Parse(txtBoiling.Text) <= 50)   //High Vol
+                {
+                    num.Add(3);
+                }
+
+                else if (groupD.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) <= 100 && int.Parse(txtBoiling.Text) <= 200)  //High Vol
+                {
+                    num.Add(3);
+                }
+
+                else if(groupD.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) <= 150 && int.Parse(txtBoiling.Text) <= 300)
+                {
+                    num.Add(4);
+                }
+
+                else if (groupD.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) >= 51 && int.Parse(txtBoiling.Text) <= 150) //Med
+                {
+                    num.Add(3);
+                }
+
+                else if (groupD.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) >= 101 && int.Parse(txtBoiling.Text) <= 500) //Med
+                {
+                    num.Add(4);
+                }
+
+                else if (groupD.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) <= 301 && int.Parse(txtBoiling.Text) <= 700) //MEd
+                {
+                    num.Add(4);
+                }
+
+                else if (groupD.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) >= 0 && int.Parse(txtBoiling.Text) <= 350) //Low
+                {
+                    num.Add(2);
+                }
+                else if (groupD.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) <= 51 && int.Parse(txtBoiling.Text) <= 450)//Low
+                {
+                    num.Add(3);
+                }
+                else if (groupD.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) <= 76 && int.Parse(txtBoiling.Text) <= 1000)//Low
+                {
+                    num.Add(3);
+                }
+
+
+                //Group E
+
+                else if (groupE.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) >= 0 && int.Parse(txtBoiling.Text) <= 50)   //High Vol
+                {
+                    num.Add(4);
+                }
+
+                else if (groupE.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) >= 100 && int.Parse(txtBoiling.Text) <= 200)  //High Vol
+                {
+                    num.Add(4);
+                }
+                else if(groupE.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) <=150 && int.Parse(txtBoiling.Text) <= 300)
+                {
+                    num.Add(4);
+                }
+
+                else if (groupE.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) >= 51 && int.Parse(txtBoiling.Text) <= 150) //Med
+                {
+                    num.Add(4);
+                }
+
+                else if (groupE.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) >= 101 && int.Parse(txtBoiling.Text) <= 500) //Med
+                {
+                    num.Add(4);
+                }
+
+                else if (groupE.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) >= 301 && int.Parse(txtBoiling.Text) <= 700) //MEd
+                {
+                    num.Add(4);
+                }
+
+                else if (groupE.Contains(name) && cbWeight.SelectedIndex == 0 || cbWeight.SelectedIndex == 3 && int.Parse(txtOperatingTemp.Text) >= 0 && int.Parse(txtBoiling.Text) <= 150) //Low
+                {
+                    num.Add(4);
+                }
+                else if (groupE.Contains(name) && cbWeight.SelectedIndex == 1 || cbWeight.SelectedIndex == 4 && int.Parse(txtOperatingTemp.Text) >= 51 && int.Parse(txtBoiling.Text) <= 150)//Low
+                {
+                    num.Add(4);
+                }
+                else if (groupE.Contains(name) && cbWeight.SelectedIndex == 2 || cbWeight.SelectedIndex == 5 && int.Parse(txtOperatingTemp.Text) >= 76 && int.Parse(txtBoiling.Text) <= 1000)//Low
+                {
+                    num.Add(4);
+                }
+        }
+        }
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                lstHazardNum.Items.Add(lstHazardNumbers.SelectedItem);
+                lstHazardNumbers.Items.Remove(lstHazardNumbers.SelectedItem);
+            }
+            catch (System.ArgumentNullException )
+            {
+                MessageBox.Show("Please Select An Item In The List Before You Click The Add Button");
+            }
+        }
+
+        private void btnCalculate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Statements();
+                Setting_Frequency_Factor();
+                Setting_Propability_Of_Injury();
+                Setting_Severity_Factor();
+                SettingNumberPeopleExposed();
+                AppendingText();
+                SettingMessage();
+
+
+                answer = severityFac * Frequency_Factor * probabilityofinjury * people_exposed;
+
+
+                MessageBox.Show("The Biggest Number is:  " + num.Max() + "\nThe Severity Factor is: " + severityFac + "\nThe Frequency Factor is: " + Frequency_Factor + "\nThe Probability Factor is: " + probabilityofinjury + "\nThe Number of people Exposed: " + people_exposed + "\nHere is the Answer: " + answer.ToString("0.00"));
+
+                this.Hide();
+                Form2 form = new Form2();
+                form.severtyFac = severityFac;
+                form.answer = answer;
+                form.Frequency_Factor = Frequency_Factor;
+                form.people_exposed = people_exposed;
+                form.probabilityofinjury = probabilityofinjury;
+
+
+                form.ShowDialog();
+
+            }
+
+            catch (System.InvalidOperationException)
+            {
+                MessageBox.Show("Please Enter In All The Inforamtion");
+            }
+        }
+
+        private void AppendingText()
+        {
+            validation();
+
+            try
+            {
+                string txt = "";        //This is setting up a blank string
+                string txt2 = "";
+
+                foreach (var person in lstHazardNum.Items)
+                {
+                    txt += person + ",";
+                }
+
+
+                txt2 += DateTime.Now + "," + textBox1.Text + "," + txtChemicalName.Text + "," + cbWeight.SelectedItem + "," + txtOperatingTemp.Text + "," + txtBoiling.Text + "," + cbFrequency.SelectedItem + "," + cbInjury.SelectedItem + "," + cbExposed.SelectedItem + ",";
+
+                string path = @"H:\Work2_Completed\Chemical_Classifications\bin\Debug\netcoreapp3.1\Statements.csv";
+
+                StreamWriter se = File.AppendText(path);
+                se.WriteLine(txt2 + txt);
+                se.Close();
+
+            }
+
+
+            catch (System.InvalidOperationException)
+            {
+                MessageBox.Show("Please Enter All The Information");
+            }
+
+        }
+
+            private void remove()
+        {
+            groupA.Remove("H302");
+            groupA.Remove("H312");
+            groupA.Remove("H332");
+            groupA.Remove("H371");
+            groupA.Remove("H301");
+            groupA.Remove("H311");
+            groupA.Remove("H314");
+            groupA.Remove("H317");
+            groupA.Remove("H318");
+            groupA.Remove("H331");
+            groupA.Remove("H335");
+            groupA.Remove("H370");
+            groupA.Remove("H300");
+            groupA.Remove("H310");
+            groupA.Remove("H330");
+            groupA.Remove("H351");
+            groupA.Remove("H360");
+            groupA.Remove("H361");
+            groupA.Remove("H362");
+            groupA.Remove("H372");
+            groupA.Remove("H334");
+            groupA.Remove("H340");
+            groupA.Remove("H341");
+            groupA.Remove("H350");
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            AddgroupB();
+            AddgroupC();
+            AddgroupD();
+            AddgroupE();
+            readfile();
+            remove();
+        }
+
+        private void Setting_Severity_Factor()
+        {
+            try
+            {
+                if (num.Max() == 1)
+                {
+                    severityFac = 1;
+                }
+                else if (num.Max() == 2)
+                {
+                    severityFac = 3;
+                }
+                else if (num.Max() == 3)
+                {
+                    severityFac = 4;
+                }
+                else if (num.Max() == 4)
+                {
+                    severityFac = 6;
+                }
+
+            }
+
+            catch (System.InvalidOperationException)
+            {
+                MessageBox.Show("Please Enter All The Information");
+            }
+
+        }
+
+        private void validation()
+        {
+            if(textBox1.Text == "")
+            {
+                MessageBox.Show("Please Enter in your Name");
+                textBox1.Focus();
+
+            }
+            else if(txtBoiling.Text == "")
+            {
+                MessageBox.Show("Please Enter in the Boiling Point");
+                txtBoiling.Focus();
+            }
+            else if(txtChemicalName.Text == "")
+            {
+                MessageBox.Show("Please Enter in the Chemical Name");
+                txtChemicalName.Focus();
+            }
+            else if(txtOperatingTemp.Text == "")
+            {
+                MessageBox.Show("Please Enter in the Operating Temp");
+                txtOperatingTemp.Focus();
+            }
+            else if(cbExposed.Text == "")
+            {
+                MessageBox.Show("Please Select One Of The Following in the Drop Down Box");
+                cbExposed.Focus();
+            }
+            else if(cbFrequency.Text == "")
+            {
+                MessageBox.Show("Please Select One Of The Following the Frequency Drop Down Menu");
+                cbFrequency.Focus();
+            }
+            else if(cbInjury.Text == "")
+            {
+                MessageBox.Show("Please Select One Of The Following In The Injury Drop Down Menu");
+                cbInjury.Focus();
+            }
+            else if(cbWeight.Text == "")
+            {
+                MessageBox.Show("Please Select One Of The Following In The Weight In The Drop Down Menu");
+                cbWeight.Focus();
+            }
+        }
+        private void SettingMessage()
+        {
+            if (answer <= 5)
+            {
+                person = "Acceptable";
+            }
+            else if (answer <= 15)
+            {
+                person = "Low";
+            }
+            else if (answer <= 40)
+            {
+                person = "Signifficant";
+            }
+            else if (answer <= 100)
+            {
+                person = "High";
+            }
+            else if (answer > 100)
+            {
+                person = "Extreme";
+            }
+        }
+
+        private void Setting_Frequency_Factor()
+        {
+            if (cbFrequency.SelectedIndex == 0)
+            {
+                Frequency_Factor = 0.1;
+            }
+            else if (cbFrequency.SelectedIndex == 1)
+            {
+                Frequency_Factor = 0.2;
+            }
+            else if (cbFrequency.SelectedIndex == 2)
+            {
+                Frequency_Factor = 1;
+            }
+            else if (cbFrequency.SelectedIndex == 3)
+            {
+                Frequency_Factor = 1.5;
+            }
+            else if (cbFrequency.SelectedIndex == 4)
+            {
+                Frequency_Factor = 2.5;
+            }
+            else if(cbFrequency.SelectedIndex == 5)
+            {
+                Frequency_Factor = 4;
+            }
+            else if(cbFrequency.SelectedIndex == 6)
+            {
+                Frequency_Factor = 5;
+            }
+        }
+
+        private void Setting_Propability_Of_Injury()
+        {
+            if (cbInjury.SelectedIndex == 0)
+            {
+                probabilityofinjury = 0.1;
+            }
+            else if (cbInjury.SelectedIndex == 1)
+            {
+                probabilityofinjury = 1;
+            }
+            else if (cbInjury.SelectedIndex == 2)
+            {
+                probabilityofinjury = 2;
+            }
+            else if (cbInjury.SelectedIndex == 3)
+            {
+                probabilityofinjury = 3;
+            }
+            else if (cbInjury.SelectedIndex == 4)
+            {
+                probabilityofinjury = 4;
+            }
+            else if (cbInjury.SelectedIndex == 5)
+            {
+                probabilityofinjury = 5;
+            }
+            else if (cbInjury.SelectedIndex == 6)
+            {
+                probabilityofinjury = 6;
+            }
+        }
+
+        private void SettingNumberPeopleExposed()
+        {
+            if (cbInjury.SelectedIndex == 0)
+            {
+                people_exposed = 1;
+            }
+            else if (cbInjury.SelectedIndex == 1)
+            {
+                people_exposed = 2;
+            }
+            else if (cbInjury.SelectedIndex == 2)
+            {
+                people_exposed = 3;
+            }
+            else if (cbInjury.SelectedIndex == 3)
+            {
+                people_exposed = 4;
+            }
+            else if (cbInjury.SelectedIndex == 4)
+            {
+                people_exposed = 5;
+            }
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                lstHazardNumbers.Items.Add(lstHazardNum.SelectedItem);
+                lstHazardNum.Items.Remove(lstHazardNum.SelectedItem);
+            }
+            catch(System.ArgumentNullException)
+            {
+                MessageBox.Show("Please Select An Item In The Right Hand List Box To Remove");
+            }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+
+
+
+    }
