@@ -1,0 +1,72 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+using System.IO;
+
+
+
+namespace Chemical_Classifications
+{
+public partial class Form2 : Form
+{
+internal int severtyFac;
+internal double answer;
+internal double Frequency_Factor;
+internal double people_exposed;
+internal double probabilityofinjury;
+
+
+
+public Form2()
+{
+InitializeComponent();
+}
+private void Form2_Load(object sender, EventArgs e)
+{
+
+if (answer <= 5)
+{
+lblMessageNum.Text = "Acceptable";
+}
+else if (answer <= 15)
+{
+lblMessageNum.Text = "Low";
+}
+else if (answer <= 40)
+{
+lblMessageNum.Text = "Signifficant";
+}
+else if (answer <= 100)
+{
+lblMessageNum.Text = "High";
+}
+else if (answer > 100)
+{
+lblMessageNum.Text = "Extreme";
+}
+
+lblServertyNum.Text = severtyFac.ToString();
+lblOverallRatingNumber.Text = answer.ToString("0.00");
+lblFrequencyFactorNum.Text = Frequency_Factor.ToString();
+lblNumberFactorNum.Text = people_exposed.ToString();
+lblProbabilityFactorNum.Text = probabilityofinjury.ToString();
+}
+
+private void btnReset_Click(object sender, EventArgs e)
+{
+this.Hide();
+Form1 form = new Form1();
+form.ShowDialog();
+
+}
+}
+
+}
+
